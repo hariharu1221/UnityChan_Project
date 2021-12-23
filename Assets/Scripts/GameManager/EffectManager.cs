@@ -3,35 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-public class EffectManager : MonoBehaviour
+public class EffectManager : Singleton<EffectManager>
 {
-    [SerializeField] private Prefabs effect;
-    static EffectManager instance;
-    public static EffectManager Instance
-    {
-        get
-        {
-            if (instance == null)
-            {
-                var n = GameObject.Instantiate(Resources.Load<GameObject>("EffectManager"));
-                DontDestroyOnLoad(n);
-                instance = n.GetComponent<EffectManager>();
-            }
-            return instance;
-        }
-    }
+    [SerializeField] private PrefabsData effect;
 
     private void Awake()
     {
-        if (instance == null) instance = this;
-        else Destroy(instance);
+        effect = Resources.Load<PrefabsData>("Effects");
     }
 
-    void Update()
-    {
-        
-    }
-    
     IEnumerator PlayEffectOnceCoroutine(int index, Vector3 position, Vector3 rotation, float size, float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
@@ -39,8 +19,6 @@ public class EffectManager : MonoBehaviour
         n.transform.position = position;
         n.transform.rotation = Quaternion.Euler(rotation);
         n.transform.localScale = Vector3.one * size;
-        //List<ParticleSystem> list = n.GetComponentsInChildren<ParticleSystem>().ToList();
-        //list.Add(n.GetComponent<ParticleSystem>());
         yield return new WaitForSeconds(n.GetComponent<ParticleSystem>().duration);
         Destroy(n);
     }
@@ -57,8 +35,6 @@ public class EffectManager : MonoBehaviour
         n.transform.position = transform.position + plusVector;
         n.transform.rotation = transform.rotation;
         n.transform.localScale = Vector3.one * size;
-        //List<ParticleSystem> list = n.GetComponentsInChildren<ParticleSystem>().ToList();
-        //list.Add(n.GetComponent<ParticleSystem>());
         yield return new WaitForSeconds(n.GetComponent<ParticleSystem>().duration);
         Destroy(n);
     }
