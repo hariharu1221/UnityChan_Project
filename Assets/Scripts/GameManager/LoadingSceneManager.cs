@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class LoadingSceneManager : Singleton<LoadingSceneManager>
 {
     public static string nextScene;
-    public Image fade;
 
     public void LoadSceneFade(string sceneName)
     {
@@ -19,17 +18,16 @@ public class LoadingSceneManager : Singleton<LoadingSceneManager>
     {
         AsyncOperation op = SceneManager.LoadSceneAsync(nextScene);
         op.allowSceneActivation = false;
+        UIManager.Instance.Fade(1.0f, true);
         float timer = 0f;
-
         while(!op.isDone)
         {
-            yield return null;
             timer += Time.deltaTime;
-            if (op.progress > 0.9f)
-            {
-                
-            }
+            if (timer > 1.0f)
+                op.allowSceneActivation = true;
+            yield return null;
         }
+        UIManager.Instance.Fade(1.0f, false);
         yield return new WaitForSeconds(1);
     }
 

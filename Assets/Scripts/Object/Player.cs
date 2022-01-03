@@ -24,33 +24,24 @@ public class Player : MonoBehaviour
 
     private Animator anim;
     private Rigidbody rigid;
-    public int isJump = 0;
     private bool isBorder;
     private bool ableJump = true;
     private bool ableRun = true;
+    private int isJump = 0;
     public bool isAttack = false;
 
-    public static Player Instance;
-
-    private void Awake()
-    {
-        if (Instance == null) Instance = this;
-        else Destroy(Instance);
-    }
-
     Vector3 LastPos;
-    void Start()
+
+    private void Start()
     {
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
-
         LastPos = transform.position;
     }
 
-    void Update()
+    private void Update()
     {
         KeyInput();
-
         if (transform.position.y <= -5) transform.position = Vector3.zero;
     }
 
@@ -58,13 +49,13 @@ public class Player : MonoBehaviour
     {
         Vector2 mPos = new Vector2(transform.position.x - LastPos.x, transform.position.z - LastPos.z);
         if (mPos.magnitude / Time.deltaTime < 0.3f)
-            SetMoveFalse();
+            ResetAnimMove();
         LastPos = transform.position;
     }
 
-    public float nowSpeed = 0;
+    private float nowSpeed = 0;
 
-    public void SetRotationY(float y, float rotationSpeed = -1)
+    private void SetRotationY(float y, float rotationSpeed = -1)
     {
         Quaternion rotation = Quaternion.Euler(0, y, 0);
         if (rotationSpeed <= -1)
@@ -73,7 +64,7 @@ public class Player : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
     }
 
-    void KeyInput()
+    private void KeyInput()
     {
         MoveKey();
         Jumping();
@@ -86,7 +77,7 @@ public class Player : MonoBehaviour
         StopToWall();
     }
 
-    void StopToWall()
+    private void StopToWall()
     {
         Vector3 foward = transform.forward + new Vector3(0, 1.2f, 0);
         Vector3 pos = transform.position + new Vector3(0, 0.2f, 0);
@@ -103,11 +94,9 @@ public class Player : MonoBehaviour
 
             if (isBorder) break;
         }
-
-        if (isBorder) Debug.Log("true");
     }
 
-    void SkillKey()
+    private void SkillKey()
     {
         if (Input.GetMouseButtonDown(0) && attackCheck == 0)
             Attack();
@@ -117,9 +106,8 @@ public class Player : MonoBehaviour
             R();
     }
 
-
-    public int attackCheck = 0;
-    void Attack()
+    private int attackCheck = 0;
+    private void Attack()
     {
         if (isEx) return;
         StartCoroutine(attackWait(0.4f));
@@ -163,23 +151,23 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void E()
+    private void E()
     {
         transform.Translate(0, 0.1f, 1);
         EffectManager.Instance.PlayEffectOnce(0, transform.position, transform.rotation.eulerAngles, 0.8f);
         this.rigid.AddRelativeForce(new Vector3(0, 0, 1) * (speed * 3.5f + 1) * 50, ForceMode.Impulse);
     }
 
-    public void R()
+    private void R()
     {
-        anim.SetTrigger("doEx");
         StopAllCoroutines();
         StartCoroutine(Ex());
     }
 
-    public bool isEx = false;
+    private bool isEx = false;
     IEnumerator Ex()
     {
+        anim.SetTrigger("doEx");
         isEx = true;
         ableJump = false;
         ableRun = false;
@@ -191,7 +179,7 @@ public class Player : MonoBehaviour
         isEx = false;
     }
 
-    void MoveKey()
+    private void MoveKey()
     {
         if (Input.GetKey(KeyCode.LeftShift)) RunSpeed();
 
@@ -209,31 +197,31 @@ public class Player : MonoBehaviour
         nowSpeed = speed;
     }
 
-    public void Jump()
+    private void Jump()
     {
         if (isJump != 0 || ableJump == false) return;
         isJump = 1;
     }
 
-    public void RunSpeed()
+    private void RunSpeed()
     {
         if (ableRun == false) return;
         nowSpeed = speed * 3.5f;
         anim.SetBool("isRun", true);
     } //뛰는 스피드로
 
-    public void WalkSpeed()
+    private void WalkSpeed()
     {
         nowSpeed = speed;
         anim.SetBool("isRun", false);
     } //걷는 스피드로
 
-    public void RotationMove(float value, float speed) //캐릭터 방향 및 앞으로 움직임
+    private void RotationMove(float value, float speed) //캐릭터 방향 및 앞으로 움직임
     {
         SetRotationY(value);
         if (isBorder || isAttack)
         {
-            SetMoveFalse();
+            ResetAnimMove();
             return;
         }
         float translation = speed;
@@ -244,7 +232,7 @@ public class Player : MonoBehaviour
         anim.SetBool("isMove", true);
     }
 
-    void Jumping()
+    private void Jumping()
     {
         foreach (var list in doubleKeys)
             if (Input.GetKey(list.keyOne) && Input.GetKey(list.keyTwo))
@@ -268,11 +256,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetMoveFalse()
+    private void ResetAnimMove()
     {
         anim.SetBool("isMove", false);
         anim.SetBool("isRun", false);
-        //nowSpeed = 0;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -284,11 +271,6 @@ public class Player : MonoBehaviour
     private void OnCollisionStay(Collision collision)
     {
         isJump = 0;
-    }
-
-    public Transform getTransform()
-    {
-        return transform;
     }
 }
 
@@ -317,3 +299,7 @@ public class OneKeyCode
         this.value = value;
     }
 }
+
+
+//StopToWall() Exist로 수정 할것
+//

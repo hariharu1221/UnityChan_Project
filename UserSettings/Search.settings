@@ -8,7 +8,7 @@ onBoardingDoNotAskAgain = true
 showPackageIndexes = false
 showStatusBar = false
 scopes = {
-	"last_search.83F126EB" = ""
+	"last_search.83F126EB" = "t:Prefab"
 	"m_ShownPanels.83F126EB" = "3"
 	"m_SideBarSplitter.83F126EB" = "180"
 	"m_DetailsPanelSplitter.83F126EB" = "700"
@@ -86,5 +86,6 @@ providers = {
 	}
 }
 recentSearches = [
+	"t:Prefab"
 ]
 savedSearchesSortOrder = 0

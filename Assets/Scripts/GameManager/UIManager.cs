@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class UIManager : Singleton<UIManager>
 {
-    IEnumerator Fade(bool isIn)
+    public void Fade(float time, bool isIn)
+    {
+        StartCoroutine(FadeCor(time, isIn));
+    }
+
+    IEnumerator FadeCor(float time, bool isIn)
     {
         yield return new WaitForSeconds(1);
     }
